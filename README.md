@@ -5,15 +5,16 @@
    Output and Input data have same bit widths
 
 **2.condition**
-This module can work under the following transmission timing：
+1. This module can work under the following transmission timing：
 ![image](https://github.com/BIG-melon-xx/axi_stream_insert_header/assets/125166958/9b9ab810-1c0d-49c7-a76f-c6d673c2125c)
 Output data has a 1 clk delay relative to input data
+3. Size of packet must be even.
 
 **3. circuit structure**
-![image](https://github.com/BIG-melon-xx/axi_stream_insert_header/assets/125166958/393c463c-9175-469e-a836-8cfcc7cd6f72)
-
-The data is alternately stored in the upper and lower parts of the register（8 bit Reg  × 8）.The output data is obtained by reading a specific register through a multiplexer.
+![image](https://github.com/BIG-melon-xx/axi_stream_insert_header/assets/125166958/73b30536-f05c-4050-9e2c-48e3cda718cb)
+The data is alternately stored in the upper and lower parts of the register.The output data is obtained by reading specific the specific part of the register through two multiplexers.
 
 **4. Result**
-![image](https://github.com/BIG-melon-xx/axi_stream_insert_header/assets/125166958/c3ddadee-0889-494d-8489-578700c3a638)
+![image](https://github.com/BIG-melon-xx/axi_stream_insert_header/assets/125166958/e1e231e2-6649-4229-a392-3ac82711e2a5)
+
 
