@@ -35,24 +35,44 @@ module tb();
     reg [BYTE_CNT_WD-1 : 0] byte_insert_cnt;
     wire ready_insert;
 
+    reg [31:0] random_delay;  // Random transmission start time point
+    reg [31:0] counter;      
+    reg        delay_done;         
+
     always #5 clk = ~clk;
 
     // Initialize
     initial begin
         clk = 0;
         rst_n = 1;
-        #5  rst_n = 0;
+        random_delay = 15 + ({$random} % 50); 
+        delay_done = 0;
+        counter = 0;
+        ready_out = 0;
+        valid_in = 0;
+        rst_n = 0;
         #10 rst_n = 1;
         
     end 
 
-    wire [BYTE_CNT_WD-1:0] random;
-    //  Header stimulus
-    initial  begin
-        #20
-        #4  valid_insert = 1; 
+     // counter for random delay  
+    always @(posedge clk) begin  
+        if (!delay_done) begin  
+            if (counter == random_delay)
+                delay_done <= 1;   
+            else 
+                counter <= counter + 1;   
+        end  
+        else 
+            delay_done = delay_done; // when delay_done is 1, transmition starts
+    end
+
+    // stimulus for Header inputs and handshake signals
+    always @(posedge delay_done)  begin
+            valid_insert = 1; 
             data_insert = {$random} % data_size; 
             byte_insert_cnt = {$random} % (byte_size-1);
+
             if (byte_insert_cnt == 3 ) 
                 keep_insert = 4'b1111;
             else if (byte_insert_cnt == 2)
@@ -61,37 +81,51 @@ module tb();
                 keep_insert = 4'b0011;
             else
                 keep_insert = 4'b0001;
-        #15 valid_insert = 0; 
-            keep_insert = 'bx; 
-            data_insert = 'bx; 
 
-        #15 ready_out = 1;
+        #20 valid_in = 1;
+        #10 ready_out = 1;
         #10 ready_out = 0;
-        
     end
 
+    // handshake signal feedback
+    always @(posedge clk) begin
+        if (ready_insert) begin
+            valid_insert = 0; 
+            keep_insert = 0; 
+            data_insert = 0; 
+            byte_insert_cnt = 0;
+        end
+        else begin
+            valid_insert = valid_insert; 
+            keep_insert = keep_insert; 
+            data_insert = data_insert;
+            byte_insert_cnt = byte_insert_cnt;
+        end   
+
+        if (ready_in) 
+            valid_in = 0;  
+        else 
+            valid_in = valid_in;   
+    end
+
+    // stimulus for input data
     reg [1:0] random_in;
-    initial  begin
-        // data input
-        #20
-        #14  valid_in = 1; 
-        #15  valid_in = 0;  
-    end
-
     integer i;
-    initial begin
-        #20
-        #14
+    // if valid_in is 1, data input begins
+    always @(posedge valid_in) begin  
+        data_in = {$random} % (data_size);  // first input data
+        keep_in = -1; 
+        #10
 
-        for (i = 0; i < packet_size-1; i = i + 1) begin
+        for (i = 1; i < packet_size-1; i = i + 1) begin
             #10
             data_in = {$random} % (data_size);
             keep_in = -1;   
         end
-        #10
+        
         last_in = 1;
         data_in = {$random} % (data_size);
-        random_in = {$random} % byte_size;
+        random_in = {$random} % (byte_size);
         if (byte_insert_cnt == 3 ) 
             keep_in = 4'b0;
         else if (byte_insert_cnt == 2)
