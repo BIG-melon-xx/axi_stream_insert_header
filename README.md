@@ -6,15 +6,16 @@
 
 **2.condition**
 1. This module can work under the following transmission timing：
-![image](https://github.com/BIG-melon-xx/axi_stream_insert_header/assets/125166958/9b9ab810-1c0d-49c7-a76f-c6d673c2125c)
-Output data has a 1 clk delay relative to input data
-3. Size of packet must be even.
+![image](https://github.com/BIG-melon-xx/axi_stream_insert_header/assets/125166958/92451e97-f0d7-45d1-8f76-d9eef6a743de)
+Because the output circuit is combinational logic, output data and input data change near the same rising edge. Due to the setup and hold time, the output data can only be registered in the input register of the next level on the next rising edge, just like a shift register.
+2. Size of packet must be even.
 
 **3. circuit structure**
 ![image](https://github.com/BIG-melon-xx/axi_stream_insert_header/assets/125166958/73b30536-f05c-4050-9e2c-48e3cda718cb)
 The data is alternately stored in the upper and lower parts of the register.The output data is obtained by reading specific the specific part of the register through two multiplexers.
 
 **4. Result**
-![image](https://github.com/BIG-melon-xx/axi_stream_insert_header/assets/125166958/e1e231e2-6649-4229-a392-3ac82711e2a5)
+![image](https://github.com/BIG-melon-xx/axi_stream_insert_header/assets/125166958/be477763-6f1f-4ead-bfcc-edb759dbd13f)
+
 
 
