@@ -7,7 +7,7 @@
 **2.condition**
 1. This module can work under the following transmission timing：
 ![image](https://github.com/BIG-melon-xx/axi_stream_insert_header/assets/125166958/92451e97-f0d7-45d1-8f76-d9eef6a743de)
-Because the output circuit is combinational logic, output data and input data change near the same rising edge. Due to the setup and hold time, the output data can only be registered in the input register of the next level on the next rising edge, just like a shift register.
+Because the output circuit is combinational logic, output data and input data synchronously change near the same rising edge. Due to the setup and hold time, the output data can only be registered in the input register of the next level on the next rising edge, just like a shift register.
 2. Size of packet must be even.
 
 **3. circuit structure**
